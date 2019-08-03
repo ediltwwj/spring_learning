@@ -94,7 +94,7 @@
       <bean id="accountService" class="com.spring.service.impl.AccountServiceImpl"
             scope="prototype" init-method="init" destroy-method="destroy"></bean>
   ```
-+ **DI依赖注入** 
++ **DI依赖注入**  
   **概念: 在当前类需要用到其他类的对象，由spring为我们提供，我们只需要在配置文件中说明依赖关系的维护，就称之为依赖注入**
   - 能注入的数据有三类  
     1、基本类型和String  
