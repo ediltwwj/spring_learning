@@ -362,6 +362,7 @@ public class JdbcConfig {
 }
 ```  
 **Junit整合**  
+**好处: 不用每次都写一大串测试代码,通过注解可以直接引入Spring容器进行测试**  
   + 添加依赖  
   ```
   <dependency>
