@@ -6,7 +6,7 @@
 将类的对象的创建交给Spring容器管理创建，以此来降低耦合 
   - 入门使用  
     1、配置pom.xml  
-    ```
+    ``` java
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -16,7 +16,7 @@
     </dependencies>
     ```  
     2、配置bean.xml  
-    ```
+    ```  java
     <?xml version="1.0" encoding="UTF-8"?>
     <beans xmlns="http://www.springframework.org/schema/beans"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
