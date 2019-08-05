@@ -2,11 +2,16 @@ package com.spring.test;
 
 import com.spring.domain.Account;
 import com.spring.service.AccountService;
+import config.SpringConfiguration;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.List;
+
+// ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");  XML方式
+// ApplicationContext ac = new AnnotationConfigApplicationContext(SpringConfiguration.class);  注解方式
 
 /**
  * @author 13967
@@ -20,7 +25,7 @@ public class AccountServiceTest {
     public void testFindAll(){
 
         // 1、获取容器
-        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        ApplicationContext ac = new AnnotationConfigApplicationContext(SpringConfiguration.class);
         // 2、得到业务层对象
         AccountService as = ac.getBean("accountService", AccountService.class);
         // 3、执行方法
@@ -35,7 +40,7 @@ public class AccountServiceTest {
     public void testFindOne(){
 
         // 1、获取容器
-        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        ApplicationContext ac = new AnnotationConfigApplicationContext(SpringConfiguration.class);
         // 2、得到业务层对象
         AccountService as = ac.getBean("accountService", AccountService.class);
         // 3、执行方法
@@ -51,7 +56,7 @@ public class AccountServiceTest {
         account.setMoney(2000f);
 
         // 1、获取容器
-        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        ApplicationContext ac = new AnnotationConfigApplicationContext(SpringConfiguration.class);
         // 2、得到业务层对象
         AccountService as = ac.getBean("accountService", AccountService.class);
         // 3、执行方法
@@ -63,7 +68,7 @@ public class AccountServiceTest {
     public void testUpdate(){
 
         // 1、获取容器
-        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        ApplicationContext ac = new AnnotationConfigApplicationContext(SpringConfiguration.class);
         // 2、得到业务层对象
         AccountService as = ac.getBean("accountService", AccountService.class);
         // 3、执行方法
@@ -77,7 +82,7 @@ public class AccountServiceTest {
     public void testDelete(){
 
         // 1、获取容器
-        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        ApplicationContext ac = new AnnotationConfigApplicationContext(SpringConfiguration.class);
         // 2、得到业务层对象
         AccountService as = ac.getBean("accountService", AccountService.class);
         // 3、执行方法
