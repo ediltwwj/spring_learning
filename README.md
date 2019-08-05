@@ -6,7 +6,7 @@
 将类的对象的创建交给Spring容器管理创建，以此来降低耦合 
   - 入门使用  
     1、配置pom.xml  
-    ``` java
+    ```  xml
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -16,7 +16,7 @@
     </dependencies>
     ```  
     2、配置bean.xml  
-    ```  java
+    ```  xml
     <?xml version="1.0" encoding="UTF-8"?>
     <beans xmlns="http://www.springframework.org/schema/beans"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -46,7 +46,7 @@
     + BeanFactory适用于多例，而ApplicationContext会自动判断单例还是多例，实际开发多采用ApplicationContext   
   - 三种创建Bean对象的方式  
     + 第一种: 使用默认构造函数  
-    ```  java
+    ```  xml
         <!-- 创建bean的三种方式 -->
         <!-- 第一种方式: 使用默认构造函数创建。
             在spring的配置文件中使用bean标签，配以id和class属性之后，且没有其他属性和标签时。
@@ -55,18 +55,18 @@
         <bean id="accountService" class="com.spring.service.impl.AccountServiceImpl"></bean>
     ```
     + 第二种: 使用普通工厂的方法  
-    ```  java
+    ```  xml
         <!-- 第二种方式: 使用普通工厂中的方法创建对象(使用某个类中的方法)，并存入spring容器 -->
         <bean id="instanceFactory" class="com.spring.factory.InstanceFactory"></bean>
         <bean id="accountService" factory-bean="instanceFactory" factory-method="getAccountService"></bean>
     ```
     + 第三种: 使用工厂中的静态方法 
-    ```  java
+    ```  xml
         <!-- 第三种方式，使用工厂中的静态方法创建对象（使用某个类中的静态方法来创建对象），并存入spring容器 -->
         <bean id="accountService" class="com.spring.factory.StaticFactory" factory-method="getAccountService"></bean>
     ```
   - bean的作用范围调整  
-  ```  java
+  ```  xml
       <!-- bean的作用范围调整
            bean标签的scope属性用于指定bean的作用范围
               取值:
@@ -79,7 +79,7 @@
       <bean id="accountService" class="com.spring.service.impl.AccountServiceImpl" scope="prototype"></bean>
   ```
   - bean对象的生命周期  
-  ```  java
+  ```  xml
       <!-- bean对象的生命周期
               单例对象:
                   出生: 当容器创建时对象出生
@@ -102,7 +102,7 @@
     3、复杂类型/集合类型  
   - 注入的方式有三种  
     1、使用构造函数注入  
-    ```  java
+    ```  xml
         <!-- 构造函数注入  AccountServiceImpl.java
              使用的标签: constructor-arg
              标签出现的位置: bean标签内部
@@ -129,7 +129,7 @@
         <bean id="now" class="java.util.Date"></bean>
     ```  
     2、使用set方法注入  
-    ```  java
+    ```  xml
         <!-- set方法注入(更常用)   AccountServiceImpl2.java
              涉及的标签: property
              出现的位置: bean标签的内部
@@ -151,7 +151,7 @@
     ```
     3、使用注解注入（后序章节介绍） 
   - 注入集合数据  
-  ```  java
+  ```  xml
      <!-- 复杂类型的注入/集合类型的注入 
           用于给List结构集合注入的标签: list array set
           用于个Map结构集合注入的标签:map  props
@@ -196,7 +196,7 @@
   
 ### 2、基于注解的IOC控制反转和依赖注入(还有bean.xml存在)   
   **基于注解的XML配置**  
-  ```  java
+  ```  xml
   <?xml version="1.0" encoding="UTF-8"?>
   <beans xmlns="http://www.springframework.org/schema/beans"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -213,7 +213,7 @@
   </beans>
   ```
   **基于XML的XML配置**   
-  ```  java
+  ```  xml
    <bean id="accountService" class="com.spring.service.impl.AccountServiceImpl"
         scope="" init-method="" destroy-method="">
         <property name="" value=""/ref=""></property>
@@ -364,7 +364,7 @@ public class JdbcConfig {
 **Junit整合**  
 **好处: 不用每次都写一大串测试代码,通过注解可以直接引入Spring容器进行测试**  
   + 添加依赖  
-  ```  java
+  ```  xml
   <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-test</artifactId>
