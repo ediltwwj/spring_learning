@@ -28,7 +28,7 @@
     </beans>
     ```  
     3、创建对象并且使用  
-    ```
+    ``` java
     // 1、获取核心容器对象
     ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
     // 2、根据ID获取bean对象
@@ -46,7 +46,7 @@
     + BeanFactory适用于多例，而ApplicationContext会自动判断单例还是多例，实际开发多采用ApplicationContext   
   - 三种创建Bean对象的方式  
     + 第一种: 使用默认构造函数  
-    ``` 
+    ```  java
         <!-- 创建bean的三种方式 -->
         <!-- 第一种方式: 使用默认构造函数创建。
             在spring的配置文件中使用bean标签，配以id和class属性之后，且没有其他属性和标签时。
@@ -55,18 +55,18 @@
         <bean id="accountService" class="com.spring.service.impl.AccountServiceImpl"></bean>
     ```
     + 第二种: 使用普通工厂的方法  
-    ```
+    ```  java
         <!-- 第二种方式: 使用普通工厂中的方法创建对象(使用某个类中的方法)，并存入spring容器 -->
         <bean id="instanceFactory" class="com.spring.factory.InstanceFactory"></bean>
         <bean id="accountService" factory-bean="instanceFactory" factory-method="getAccountService"></bean>
     ```
     + 第三种: 使用工厂中的静态方法 
-    ```
+    ```  java
         <!-- 第三种方式，使用工厂中的静态方法创建对象（使用某个类中的静态方法来创建对象），并存入spring容器 -->
         <bean id="accountService" class="com.spring.factory.StaticFactory" factory-method="getAccountService"></bean>
     ```
   - bean的作用范围调整  
-  ```
+  ```  java
       <!-- bean的作用范围调整
            bean标签的scope属性用于指定bean的作用范围
               取值:
@@ -79,7 +79,7 @@
       <bean id="accountService" class="com.spring.service.impl.AccountServiceImpl" scope="prototype"></bean>
   ```
   - bean对象的生命周期  
-  ```
+  ```  java
       <!-- bean对象的生命周期
               单例对象:
                   出生: 当容器创建时对象出生
@@ -102,7 +102,7 @@
     3、复杂类型/集合类型  
   - 注入的方式有三种  
     1、使用构造函数注入  
-    ```
+    ```  java
         <!-- 构造函数注入  AccountServiceImpl.java
              使用的标签: constructor-arg
              标签出现的位置: bean标签内部
@@ -129,7 +129,7 @@
         <bean id="now" class="java.util.Date"></bean>
     ```  
     2、使用set方法注入  
-    ```
+    ```  java
         <!-- set方法注入(更常用)   AccountServiceImpl2.java
              涉及的标签: property
              出现的位置: bean标签的内部
@@ -151,7 +151,7 @@
     ```
     3、使用注解注入（后序章节介绍） 
   - 注入集合数据  
-  ```
+  ```  java
      <!-- 复杂类型的注入/集合类型的注入 
           用于给List结构集合注入的标签: list array set
           用于个Map结构集合注入的标签:map  props
@@ -196,7 +196,7 @@
   
 ### 2、基于注解的IOC控制反转和依赖注入(还有bean.xml存在)   
   **基于注解的XML配置**  
-  ```
+  ```  java
   <?xml version="1.0" encoding="UTF-8"?>
   <beans xmlns="http://www.springframework.org/schema/beans"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -213,14 +213,14 @@
   </beans>
   ```
   **基于XML的XML配置**   
-  ```
+  ```  java
    <bean id="accountService" class="com.spring.service.impl.AccountServiceImpl"
         scope="" init-method="" destroy-method="">
         <property name="" value=""/ref=""></property>
    </bean>
   ```
   **用于创建对象的注解(他们的作用就和在XML配置文件中编写一个<bean>标签实现的功能是一样的)**  
-  ```
+  ```  java
       1、Component:  
            作用: 把当前类对象存入spring容器中  
            属性:  
@@ -231,7 +231,7 @@
       以上三个注解他们的作用和属性和Component是一样的，他们三个是spring框架为我们提供明确的三层使用的注解，使我们三层对象更加清晰 
   ``` 
   **用于注入数据的注解(他们的作用就和在XML配置文件中的bean标签中写一个<property>标签的作用是一样的)**   
-  ```
+  ```  java
       1、Autowired:
            作用: 自动按照类型注入，只要容器中有唯一的一个bean对象类型和要注入的变量类型匹配，就可以注入成功
                  如果IOC容器中没有任何bean类型和要注入的变量类型匹配，则报错
@@ -254,14 +254,14 @@
                         SpEl的写法: ${表达式}
   ```
   **用于改变作用范围的注解(他们的作用就和在bean标签中使用scope属性实现的功能是一样的)**   
-  ```
+  ```  java
       1、Scope:
             作用: 用于指定bean的作用范围
             属性:
                 value: 指定范围的取值，常用取值: singleton, prototype 默认单例
   ```  
   **和生命周期相关的注解（他们的作用就和在bean标签中使用Init-method和destroy-method的作用是一样的）**   
-  ```
+  ```  java
       1、PreDestroy:
             作用: 用于指定销毁方法
       2、PostConstruct:
@@ -271,7 +271,7 @@
 ### 3、Spring新注解(代替bean.xml)和junit整合  
 **chap_05**   
 **主配置类SpringConfiguration.java**  
-```
+```  java
 /**
  * @author 13967
  * @date 2019/8/5 13:04
@@ -313,7 +313,7 @@ public class SpringConfiguration {
 }
 ```
 **子配置类JdbcConfig.java**  
-```
+```  java
 // 被主配置类使用ComponentScan，不能省略
 // 省略的话当做AnnotationConfigApplicationContext对象创建的参数,或者被主配置类Import
 // @Configuration
@@ -364,7 +364,7 @@ public class JdbcConfig {
 **Junit整合**  
 **好处: 不用每次都写一大串测试代码,通过注解可以直接引入Spring容器进行测试**  
   + 添加依赖  
-  ```
+  ```  java
   <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-test</artifactId>
@@ -372,7 +372,7 @@ public class JdbcConfig {
   </dependency>
   ```
   + 实例  
-  ```
+  ```  java
   /**
    *
    * 使用Junit单元测试，测试我们的配置
@@ -403,6 +403,7 @@ public class JdbcConfig {
           }  
       }
   ```
+  
   
     
 
