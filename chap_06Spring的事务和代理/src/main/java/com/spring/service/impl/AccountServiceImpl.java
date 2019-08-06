@@ -3,7 +3,6 @@ package com.spring.service.impl;
 import com.spring.dao.AccountDao;
 import com.spring.domain.Account;
 import com.spring.service.AccountService;
-import com.spring.utils.TransactionManager;
 
 import java.util.List;
 
@@ -18,12 +17,6 @@ import java.util.List;
 public class AccountServiceImpl implements AccountService {
 
     private AccountDao accountDao;
-
-    private TransactionManager txManager;
-
-    public void setTxManager(TransactionManager txManager) {
-        this.txManager = txManager;
-    }
 
     public void setAccountDao(AccountDao accountDao) {
 
@@ -59,6 +52,7 @@ public class AccountServiceImpl implements AccountService {
 
     public void transfer(String sourceName, String targetName, Float money) {
 
+        System.out.println("transfer....");
 
         // 2、执行操作
         // 2.1、根据名称查询转出账户
@@ -71,7 +65,7 @@ public class AccountServiceImpl implements AccountService {
         target.setMoney(target.getMoney() + money);
         // 2.5、更新转出账户
         accountDao.updateAccount(source);
-        int i = 10/0;
+        // int i = 10/0;
         // 2.6、更新转入账户
         accountDao.updateAccount(target);
     }

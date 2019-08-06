@@ -19,7 +19,7 @@ public class TransactionManager {
      */
     public void beginTranscation(){
         try{
-            connectionUtils.getThredConnection().setAutoCommit(false);
+            connectionUtils.getThreadConnection().setAutoCommit(false);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -30,7 +30,7 @@ public class TransactionManager {
      */
     public void commit(){
         try{
-            connectionUtils.getThredConnection().commit();
+            connectionUtils.getThreadConnection().commit();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -41,7 +41,7 @@ public class TransactionManager {
      */
     public void rollback(){
         try{
-            connectionUtils.getThredConnection().rollback();
+            connectionUtils.getThreadConnection().rollback();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -52,7 +52,7 @@ public class TransactionManager {
      */
     public void release(){
         try{
-            connectionUtils.getThredConnection().close();  // 并不是真正关闭连接，只是还给了连接池
+            connectionUtils.getThreadConnection().close();  // 并不是真正关闭连接，只是还给了连接池
             connectionUtils.removeConnection();
         }catch (Exception e){
             e.printStackTrace();

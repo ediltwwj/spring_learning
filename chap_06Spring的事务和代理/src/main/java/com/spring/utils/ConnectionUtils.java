@@ -23,7 +23,7 @@ public class ConnectionUtils {
      * 获取当前线程上的连接
      * @return
      */
-    public Connection getThredConnection(){
+    public Connection getThreadConnection(){
 
         try{
             // 1、先从ThreadLocal上获取
