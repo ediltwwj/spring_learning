@@ -505,7 +505,7 @@ public class JdbcConfig {
   <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
-      <version>2.1_3</version>
+      <version>2.1.3</version>
   </dependency>
   ```
   ```  java
