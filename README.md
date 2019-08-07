@@ -726,7 +726,93 @@ public class JdbcConfig {
   }  
   ```
   
+### 7、基于注解的AOP   
+  + **XML配置**(可完全注解替代)
+  扫描包标签: 在主配置类上添加 @ComponentScan("com.spring")  
+  开启AOP标签: 在主配置类上添加 @EnableAspectJAutoProxy  
+  ``` xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <beans xmlns="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:aop="http://www.springframework.org/schema/aop"
+         xmlns:context="http://www.springframework.org/schema/context"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/aop
+          http://www.springframework.org/schema/aop/spring-aop.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context.xsd">
   
+      <!-- 配置spring创建容器时，要扫描的包 -->
+      <context:component-scan base-package="com.spring"></context:component-scan>
+  
+      <!-- 配置spring开启注解AOP的支持 -->
+      <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+  </beans>
+  ``` 
+  + **切面类** 
+  ``` java
+  @Component("logger")
+  @Aspect  // 表示当前类是一个切面类
+  public class Logger {
+  
+      @Pointcut("execution(* com.spring.service.impl.*.*(..))")
+      private void pt1(){};
+  
+      /**
+       * 前置通知
+       */
+      //@Before("pt1()")
+      public void beforePrintLog(){
+          System.out.println("前置通知Logger类中的printLog方法开始记录日志了...");
+      }
+  
+      /**
+       * 后置通知
+       */
+      //@AfterReturning("pt1()")
+      public void afterReturnPrintLog(){
+          System.out.println("后置通知Logger类中的afterReturnPrintLog方法开始记录日志了...");
+      }
+  
+      /**
+       * 异常通知
+       */
+      //@AfterThrowing("pt1()")
+      public void afterThrowingPrintLog(){
+          System.out.println("异常通知Logger类中的afterThrowingPrintLog方法开始记录日志了...");
+      }
+  
+      /**
+       * 最终通知
+       */
+      //@After("pt1()")
+      public void afterPrintLog(){
+          System.out.println("最终通知Logger类中的afterPrintLog方法开始记录日志了...");
+      }
+      
+      @Around("pt1()")
+      public Object aroundPrintLog(ProceedingJoinPoint pjp){
+          Object rtValue = null;
+          //
+          try{
+              Object[] args = pjp.getArgs();
+              System.out.println("环绕通知-前置通知");
+              rtValue = pjp.proceed(args); // 明确调用业务层方法（切入点方法）
+              System.out.println("环绕通知-后置通知");
+              return rtValue;
+          }catch (Throwable t){
+              System.out.println("环绕通知-异常通知");
+              throw new RuntimeException(t);
+          }finally {
+              System.out.println("环绕通知-.最终通知");
+          }
+      }
+  }
+  ```
+  **注意事项:基于注解的aop，通知在执行顺序上存在问题，由运行结果可以看到最终通知优先于后置通知执行
+    所以在选择注解还是XML上需要考虑，此外也可以用注解环绕通知解决上述问题**  
+    
   
   
   
