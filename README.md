@@ -1,7 +1,7 @@
 # Spring的学习笔记  
 ## 目录  
 [toc] 后续生成目录  
-### **1、基于XML的IOC控制反转和DI依赖注入**          
+### 1、基于XML的IOC控制反转和DI依赖注入            
 + **IOC控制反转**  
 将类的对象的创建交给Spring容器管理创建，以此来降低耦合 
   - 入门使用  
@@ -194,7 +194,7 @@
       </bean>
   ```
   
-### **2、基于注解的IOC控制反转和依赖注入(还有bean.xml存在)**     
+### 2、基于注解的IOC控制反转和依赖注入(还有bean.xml存在)       
   **基于注解的XML配置**  
   ```  xml
   <?xml version="1.0" encoding="UTF-8"?>
@@ -268,7 +268,7 @@
             作用: 用于指定初始化方法
   ```  
   
-### **3、Spring新注解(代替bean.xml)和junit整合**    
+### 3、Spring新注解(代替bean.xml)和junit整合      
 **chap_05**   
 **主配置类SpringConfiguration.java**  
 ```  java
@@ -404,7 +404,7 @@ public class JdbcConfig {
       }
   ```
   
-### **4、动态代理**  
+### 4、动态代理    
   + **基于接口的动态代理**  
   ``` java
   /**
@@ -563,6 +563,43 @@ public class JdbcConfig {
       cglibProducer.saleProduct(12000f);
   }
   ```  
+  
+### 5、AOP面向切面编程  
+**专属名词**  
+  + 连接点  
+    所谓连接点是指那些被拦截到的点。在spring中，这些点指的是方法，因为spring只支持方法类型的连接点（被代理类的接口的方法）
+  + 切入点  
+    所谓切入点是指我们要对哪些连接点进行拦截的定义（被增强的方法）
+  + 通知/增强 
+    所谓通知是指拦截到连接点之后要做的事情  
+    通知的类型: 前置通知，后置通知，异常通知，最终通知，环绕通知  
+    ```  java
+     // 环绕通知，整个invoke方法
+     @Override
+     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+         Object rtValue = null;
+         try {
+             // ... 前置通知
+             rtValue = method.invoke(accountService, args);
+             // ... 后置通知
+         } catch (Exception e) {
+             // ... 异常通知
+         } finally {
+             // ... 最终通知 
+         }
+     }
+    ``` 
+  + 引介  
+    引介是一种特殊的通知在不修改类代码的前提下，可以在运行期为类动态地添加一些方法或字段  
+  + 目标对象  
+    代理的目标对象  
+  + 织入  
+    是指把增强应用到目标对象来创建新的代理对象的过程，spring使用动态代理织入  
+  + 代理  
+    一个类被AOP织入增强后，就产生一个结果代理类  
+  + 切面  
+    是切入点和通知（引介）的结合  
+    
   
   
   
