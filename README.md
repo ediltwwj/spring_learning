@@ -600,6 +600,97 @@ public class JdbcConfig {
   + 切面  
     是切入点和通知（引介）的结合  
     
+### 6、基于XML的AOP
+  + **XML约束**  
+  ``` xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <beans xmlns="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:aop="http://www.springframework.org/schema/aop"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/aop
+          http://www.springframework.org/schema/aop/spring-aop.xsd">
+          
+  </beans>
+  ```
+  + **AOP配置步骤和四种通知的配置** 
+  ``` xml
+  1、把通知Bean也交给spring来管理
+  2、使用aop:config标签表明开始AOP的配置
+  3、使用aop.aspect标签表明配置切面
+    id: 给切面提供一个唯一标识
+    ref: 指定通知类bean的id
+  4、在aop:aspect标签内部使用对应的标签来配置通知的类型
+    aop:before 表示配置前置通知
+    aop:after-returning 表示配置后置通知
+    aop:after-thorwing 表示配置异常通知
+    aop:after 表示配置最终通知
+        method属性: 用于指定Logger类中哪个方法是前置通知
+        pointcut属性: 用于指定切入点表达式，该表达式的含义指的是对业务层中哪些方法增强
+        pointtcut-ref属性: 用于指定切入点表达式配置的id
+  aop:pointcut:表示配置切入点表达式，写在aop:aspect标签内部，只能当前切面使用，外部则全部切面可用
+    id属性:用于指定表达式的唯一标识
+    expression属性:用于指定表达式内容            
+  ```
+  ```
+  <!-- 配置spring的IOC，把service对象配置进来 -->
+      <bean id="accountService" class="com.spring.service.impl.AccountServiceImpl"></bean>
+      
+  <!-- 配置Logger类 -->
+  <bean id="logger" class="com.spring.utils.Logger"></bean>
+  
+  <!-- 配置AOP -->
+  <aop:config>
+      <!-- 配置切入点表示,id属性用于指定表达式的唯一标识, expression用于指定表达式内容
+              此标签写在aop:aspect标签内部，只能当前切面使用
+              它还可以写在aop:aspect标签外部，此时变成所有切面可用,写aspect前面 -->
+      <aop:pointcut id="pt1" expression="execution(* com.spring.service.impl.*.*(..))"></aop:pointcut>
+      <!-- 配置切面，id为名称，ref为容器中的通知bean -->
+      <aop:aspect id="logAdvice" ref="logger">
+          <!-- 配置前置通知,在切入点方法之前执行 -->
+          <aop:before method="beforePrintLog" pointcut="execution(* com.spring.service.impl.*.*(..))"></aop:before>
+          <!-- 配置后置通知,在切入点方法正常执行之后执行 -->
+          <aop:after-returning method="afterReturnPrintLog" pointcut-ref="pt1"></aop:after-returning>
+          <!-- 配置异常通知,在切入点方法产生异常之后执行 -->
+          <aop:after-throwing method="afterThrowingPrintLog" pointcut-ref="pt1"></aop:after-throwing>
+          <!-- 配置最终通知,无论切入点方法是否正常执行，都会执行 -->
+          <aop:after method="afterPrintLog" pointcut-ref="pt1"></aop:after>
+      </aop:aspect>
+  </aop:config>
+  
+  ```
+  + **切入点表达式的写法**  
+  ```
+  切入点表达式的写法:
+    关键字: execution(表达式)
+    表达式:
+        访问修饰符  返回值  包名.包名.包名..类名.方法名（参数列表）
+    标准的表达式写法:
+        public void com.spring.service.impl.AccountServiceImpl.saveAccount()
+    访问修饰符可以省略:
+        void com.spring.service.impl.AccountServiceImpl.saveAccount()
+    返回值可以使用通配符，表示任意返回值:
+        * com.spring.service.impl.AccountServiceImpl.saveAccount()
+    包名可以使用通配符，表示任意包，但有几级包，就需要写几个*.:
+        * *.*.*.*.AccountServiceImpl.saveAccount()
+    包名可以使用..表示当前包及其子包:
+        * *..AccountServiceImpl.saveAccount()
+    类名和方法名都可以使用*来实现通配:
+        * *..*.*()
+    参数列表:
+        可以直接写数据类型:
+            基本类型直接写名称 int
+            引用类型写包名.类名的方式 java.lang.String
+        可以使用通配符表示任意类型，但是必须有参数
+        可以使用..表示有无参数均可，有参数可以是任意类型
+    全通配写法:
+        * *..*.*(..)
+
+    实际开发中切入点表达式的通常写法:
+        切到业务层实现类底下的所有方法:
+            * com.spring.service.impl.*.*(..)  
+  ```
   
   
   
