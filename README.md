@@ -1,7 +1,7 @@
 # Spring的学习笔记  
 ## 目录  
 [toc] 后续生成目录  
-### 1、基于XML的IOC控制反转和DI依赖注入        
+### **1、基于XML的IOC控制反转和DI依赖注入**          
 + **IOC控制反转**  
 将类的对象的创建交给Spring容器管理创建，以此来降低耦合 
   - 入门使用  
@@ -194,7 +194,7 @@
       </bean>
   ```
   
-### 2、基于注解的IOC控制反转和依赖注入(还有bean.xml存在)   
+### **2、基于注解的IOC控制反转和依赖注入(还有bean.xml存在)**     
   **基于注解的XML配置**  
   ```  xml
   <?xml version="1.0" encoding="UTF-8"?>
@@ -268,7 +268,7 @@
             作用: 用于指定初始化方法
   ```  
   
-### 3、Spring新注解(代替bean.xml)和junit整合  
+### **3、Spring新注解(代替bean.xml)和junit整合**    
 **chap_05**   
 **主配置类SpringConfiguration.java**  
 ```  java
@@ -404,7 +404,7 @@ public class JdbcConfig {
       }
   ```
   
-### 4、动态代理
+### **4、动态代理**  
   + **基于接口的动态代理**  
   ``` java
   /**
