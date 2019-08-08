@@ -813,6 +813,93 @@ public class JdbcConfig {
   **注意事项:基于注解的aop，通知在执行顺序上存在问题，由运行结果可以看到最终通知优先于后置通知执行
     所以在选择注解还是XML上需要考虑，此外也可以用注解环绕通知解决上述问题**  
     
+### 8、Spring中的JdbcTemplate  
+  **XML配置**  
+  ``` xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <beans xmlns="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:context="http://www.springframework.org/schema/context"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans
+                  http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+  
+      <!-- 使用注解配置的时候需要 -->
+      <context:component-scan base-package="com.spring"/>
+  
+      <!-- 配置账户的持久层 -->
+      <bean id="accountDao" class="com.spring.dao.impl.AccountDaoImpl">
+          <!-- 方式1 -->
+          <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+          <!-- 方式2 -->
+          <property name="dataSource" ref="dataSource"/>
+      </bean>
+  
+      <!-- 配置JdbcTemplate -->
+      <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+          <property name="dataSource" ref="dataSource"></property>
+      </bean>
+  
+      <!-- 配置数据源 -->
+      <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+          <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+          <property name="url" value="jdbc:mysql://localhost:3306/spring_01"></property>
+          <property name="username" value="root"></property>
+          <property name="password" value="123456"></property>
+      </bean>
+  </beans>
+  ```  
+  **JdbcTemplate的CRUD操作** 
+  ``` java
+      // 注意使用BeanPropertyRowMapper<>
+      public Account findAccountByName(String accountName) {
+          List<Account>accounts = super.getJdbcTemplate().query("select * from account where name=?",
+                  new BeanPropertyRowMapper<Account>(Account.class), accountName);
+          if(accounts.isEmpty()){
+              return null;
+          }
+          if(accounts.size() > 1){
+              throw new RuntimeException("结果集不唯一");
+          }
+  
+          return accounts.get(0);
+      }
+  
+      public void updateAccount(Account account) {
+          super.getJdbcTemplate().update("update account set name=?, money=?, where id=?",
+                  account.getName(), account.getMoney(), account.getId());
+      }
+  ```
+  **抽取JdbcTemplate的公共代码**  
+  + 使用XML配置时：继承JdbcDaoSupport，通过getJdbcTemplate()获取  
+  ``` java
+  public class AccountDaoImpl extends JdbcDaoSupport implements AccountDao {
+  
+  
+      public Account findAccountById(Integer accountId) {
+          List<Account> accounts =  super.getJdbcTemplate().query("select * from account where id=?",
+                  new BeanPropertyRowMapper<Account>(Account.class), accountId);
+          return accounts.isEmpty() ? null : accounts.get(0);
+      }
+      
+      //......
+  }
+  ```
+  + 使用注解配置时：不继承（因为如果再使用上面的代码，注解不好添加，因为JdbcDaoSupport是别人的类）  
+  ``` java
+  @Repository("accountDao")
+  public class AccountDaoImpl2 implements AccountDao {
+  
+      @Autowired
+      private JdbcTemplate jdbcTemplate;
+  
+      public Account findAccountById(Integer accountId) {
+          List<Account> accounts =  jdbcTemplate.query("select * from account where id=?",
+                  new BeanPropertyRowMapper<Account>(Account.class), accountId);
+          return accounts.isEmpty() ? null : accounts.get(0);
+      }
+  ```
+  
+  
   
   
   
