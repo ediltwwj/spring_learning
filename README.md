@@ -899,7 +899,125 @@ public class JdbcConfig {
       }
   ```
   
-  
+### 9、声明式事务控制  
+**概念**  
+事务的配置通常是在service层，用来保证业务逻辑上数据的原子性。  
+因为在service层有可能会调用多个dao中的方法操作数据库，这些方法的操作就需要事务来保证其一致性。  
+**事务管理相关API**  
+  + spring中有一个PlatformTransactionManager接口，该接口叫做事务管理器接口，我们会使用它的两个实现类来完成事务的控制:
+    - DataSourceTransactionManager：使用 JDBC 或 myBatis 进行持久化数据时使用  
+    - HibernateTransactionManager：使用 Hibernate 进行持久化数据时使用  
+  + Spring 事务的默认回滚方式是：发生运行时异常时回滚，发生一般性异常时提交。不过，对于一般性异常，我们也可以手工设置其回滚方式  
+  + 复习一下异常方面的知识:
+    - 运行时异常: 程序在运行时才会出现的异常，是RuntimeException的子类，例如NullPointerException空指针异常  
+    - 一般性异常: 即在代码编写时要求必须捕获或抛出的异常，若不处理，则无法通过编译，例如IOException
+**五个事务隔离级别常量**  
+  + 这些常量均是以 ISOLATION_开头。例如 ISOLATION_REPEAT ABLE_READ  
+    - DEFAULT: 采用 DB 默认的事务隔离级别。MySql 的默认为 REPEATABLE_READ；Oracle默认为 READ_COMMITTED  
+    - READ_UNCOMMITTED: 读未提交。未解决任何问题  
+    - READ_COMMITTED: 读已提交。解决脏读，存在不可重复读与幻读  
+    - REPEATABLE_READ: 可重复读。解决脏读、不可重复读，存在幻读   
+    - SERIALIZABLE：串行化。解决脏读、不可重复读，幻读的问题，效率低  
+**七个事务传播行为常量**  
+  + 事务的传播行为指的是处于不同事务中的方法在相互调用时，执行期间事务的维护情况。如，A 事务中的方法 doSome()调用 B 事务中的方法 doOther()，  
+    在调用执行期间事务的维护情况，就称为事务传播行为。事务传播行为是加在方法上的。  
+  + 事务传播行为常量都是以 PROPAGATION_ 开头，例如 PROPAGATION_REQUIRED  
+    - REQUIRED 指定的方法必须在事务内执行。若当前存在事务，就加入到当前事务中；若当前没有事 务，则创建一个新事务。这种传播行为是最常见的选择，  
+    也是 Spring 默认的事务传播行为。 如该传播行为加在 doOther()方法上。若 doSome()方法在调用 doOther()方法时就是在事 务内运行的，  
+    则 doOther()方法的执行也加入到该事务内执行。若 doSome()方法在调用 doOther()方法时没有在事务内执行，则 doOther()方法会创建一个事务，  
+    并在其中执行  
+    - SUPPORTS 指定的方法支持当前事务，但若当前没有事务，也可以以非事务方式执行  
+    - MANDATORY 指定的方法必须在当前事务内执行，若当前没有事务，则直接抛出异常  
+    - REQUIRES_NEW 总是新建一个事务，若当前存在事务，就将当前事务挂起，直到新事务执行完毕  
+    - NOT_SUPPORTED 指定的方法不能在事务环境中执行，若当前存在事务，就将当前事务挂起  
+    - NEVER 指定的方法不能在事务环境下执行，若当前存在事务，就直接抛出异常  
+    - NESTED 指定的方法必须在事务内执行。若当前存在事务，则在嵌套事务内执行；若当前没有事务，则创建一个新事务  
+**默认事务超时时限**  
+  + 常量 TIMEOUT_DEFAULT 定义了事务底层默认的超时时限，及不支持事务超时时限设置的 none 值  
+  + 注意，事务的超时时限起作用的条件比较多，且超时的时间计算点较复杂。所以，该值一般就使用默认值即可，默认值是-1  
+**相关依赖**  
+```xml
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>5.0.2.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>5.0.2.RELEASE</version>
+        </dependency>
+```
+#### 基于XML的声明式事务控制  
+```xml
+    <!-- 配置业务层 -->
+    <bean id="accountService" class="com.spring.service.impl.AccountServiceImpl">
+        <property name="accountDao" ref="accountDao"></property>
+    </bean>
+
+    <!-- 配置账户的持久层 -->
+    <bean id="accountDao" class="com.spring.dao.impl.AccountDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+
+    <!-- 配置JdbcTemplate -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 配置数据源 -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://localhost:3306/spring_01"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property>
+    </bean>
+
+    <!-- spring中基于XML的声明式事务配置
+        1、配置事务管理器
+        2、配置事务的通知
+            此时我们需要导入事务的约束 tx名称空间约束，同时也需要aop的】
+            使用tx:advice标签配置事务通知
+                属性:
+                    id: 给事务通知起一个唯一表示
+                    transaction-manager: 给事务通知提供一个事务管理器引用
+        3、配置AOP中的通用切入点表达式
+        4、建立事务通知和切入点表达式的对应关系
+        5、配置事务的属性
+            是在事务的通知tx:Advice标签的内部
+
+    -->
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!-- 配置事务的通知 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <!-- 配置事务的属性
+                isolation: 用于指定事务的隔离级别，默认是DEFAULT,表示使用数据库的默认级别
+                propagation: 用于指定事务的传播行为，默认值是REQUIRED，表示一定会有事务，增删改的选择，查询可以选择SUPPORTS
+                read-only: 用于指定事务是否可读，只有查询才可以设置为true，默认值是false，表示读写:
+                timeout: 用于指定事务的超时时间，默认值-1，表示永不超时，如果指定数值，以秒为单位
+                no-rollback-for: 用于指定一个异常，当产生该异常时，事务不回滚，产生其他异常时，事务回滚，没有默认值，表示任何异常都回滚
+                rollback-for: 用于指定一个异常，当产生该异常时，事务回滚，产生其他异常时，事务不回滚，没有默认值，表示任何异常都回滚
+        -->
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED" read-only="false"/>
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true"></tx:method>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 配置AOP -->
+    <aop:config>
+        <!-- 配置切入点表达式 -->
+        <aop:pointcut id="pt1" expression="execution(* com.spring.service.impl.*.*(..))"></aop:pointcut>
+        <!-- 建立切入点表达式和事务通知的对应关系 -->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="pt1"></aop:advisor>
+    </aop:config>
+```
+
   
   
   
