@@ -1017,7 +1017,95 @@ public class JdbcConfig {
         <aop:advisor advice-ref="txAdvice" pointcut-ref="pt1"></aop:advisor>
     </aop:config>
 ```
+#### 基于注解的声明式事务控制  
+1、创建相应的配置类  
+```java
+// 和连接数据库相关的配置类
+public class JdbcConfig {
 
+    @Value("${jdbc.driver}")
+    private String driver;
+    @Value("${jdbc.url}")
+    private String url;
+    @Value("${jdbc.username}")
+    private String username;
+    @Value("${jdbc.password}")
+    private String password;
+
+    /**
+     * 创建JdbcTemplate对象
+     * @param dataSource
+     * @return
+     */
+    @Bean(name="jdbcTemplate")
+    public JdbcTemplate createJdbcTemplate(DataSource dataSource){
+        return new JdbcTemplate(dataSource);
+    }
+
+    /**
+     * 创建一个数据源对象
+     * @return
+     */
+    @Bean(name="dataSource")
+    public DataSource createDataSource(){
+
+        DriverManagerDataSource ds = new DriverManagerDataSource();
+        ds.setDriverClassName(driver);
+        ds.setUrl(url);
+        ds.setUsername(username);
+        ds.setPassword(password);
+
+        return ds;
+    }
+}
+```
+```java
+// 和事务相关的配置类
+public class TransactionConfig {
+
+    /**
+     * 用于创建事务管理器对象
+     * @param dataSource
+     * @return
+     */
+    @Bean(name="transactionManager")
+    public PlatformTransactionManager createTransactionManager(DataSource dataSource){
+        return new DataSourceTransactionManager(dataSource);
+    }
+}
+```
+```java
+// 主配置类
+@Configuration
+@ComponentScan("com.spring")
+@Import({JdbcConfig.class, TransactionConfig.class})
+@PropertySource("jdbcConfig.properties")
+@EnableTransactionManagement
+public class SpringConfiguration {
+}
+```
+2、对应Service和Dao层实现类进行注解IOC和DI  
+3、对需要添加的事务方法上添加注解@Transactional(类和方法都可以，方法优先级更高)  
+```java
+@Service("accountService")
+@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)  // 只读型事务的配置
+public class AccountServiceImpl implements AccountService {
+
+    @Autowired
+    private AccountDao accountDao;
+
+    public Account findAccountByName(String name) {
+        return accountDao.findAccountByName(name);
+    }
+
+
+    // 需要读写型事务配置
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+    public void transfer(String sourceName, String targetName, Float money) {
+        
+    }
+}
+```
   
   
   
