@@ -900,10 +900,10 @@ public class JdbcConfig {
   ```
   
 ### 9、声明式事务控制  
-**概念**  
+#### 概念  
 事务的配置通常是在service层，用来保证业务逻辑上数据的原子性。
 因为在service层有可能会调用多个dao中的方法操作数据库，这些方法的操作就需要事务来保证其一致性。  
-**事务管理相关API**  
+#### 事务管理相关API   
   + spring中有一个PlatformTransactionManager接口，该接口叫做事务管理器接口，我们会使用它的两个实现类来完成事务的控制:
     - DataSourceTransactionManager：使用 JDBC 或 myBatis 进行持久化数据时使用  
     - HibernateTransactionManager：使用 Hibernate 进行持久化数据时使用  
@@ -911,14 +911,14 @@ public class JdbcConfig {
   + 复习一下异常方面的知识:
     - 运行时异常: 程序在运行时才会出现的异常，是RuntimeException的子类，例如NullPointerException空指针异常  
     - 一般性异常: 即在代码编写时要求必须捕获或抛出的异常，若不处理，则无法通过编译，例如IOException  
-**五个事务隔离级别常量**  
+#### 五个事务隔离级别常量   
   + 这些常量均是以 ISOLATION_开头。例如 ISOLATION_REPEAT ABLE_READ  
     - DEFAULT: 采用 DB 默认的事务隔离级别。MySql 的默认为 REPEATABLE_READ；Oracle默认为 READ_COMMITTED  
     - READ_UNCOMMITTED: 读未提交。未解决任何问题  
     - READ_COMMITTED: 读已提交。解决脏读，存在不可重复读与幻读  
     - REPEATABLE_READ: 可重复读。解决脏读、不可重复读，存在幻读   
     - SERIALIZABLE：串行化。解决脏读、不可重复读，幻读的问题，效率低  
-**七个事务传播行为常量**  
+#### 七个事务传播行为常量  
   + 事务的传播行为指的是处于不同事务中的方法在相互调用时，执行期间事务的维护情况。如，A 事务中的方法 doSome()调用 B 事务中的方法 doOther(), 
     在调用执行期间事务的维护情况，就称为事务传播行为。事务传播行为是加在方法上的。
   + 事务传播行为常量都是以 PROPAGATION_ 开头，例如 PROPAGATION_REQUIRED  
@@ -932,10 +932,10 @@ public class JdbcConfig {
     - NOT_SUPPORTED 指定的方法不能在事务环境中执行，若当前存在事务，就将当前事务挂起  
     - NEVER 指定的方法不能在事务环境下执行，若当前存在事务，就直接抛出异常  
     - NESTED 指定的方法必须在事务内执行。若当前存在事务，则在嵌套事务内执行；若当前没有事务，则创建一个新事务  
-**默认事务超时时限**  
+#### 默认事务超时时限  
   + 常量 TIMEOUT_DEFAULT 定义了事务底层默认的超时时限，及不支持事务超时时限设置的 none 值  
   + 注意，事务的超时时限起作用的条件比较多，且超时的时间计算点较复杂。所以，该值一般就使用默认值即可，默认值是-1  
-**相关依赖**  
+#### 相关依赖   
 ```xml
         <dependency>
             <groupId>org.springframework</groupId>
