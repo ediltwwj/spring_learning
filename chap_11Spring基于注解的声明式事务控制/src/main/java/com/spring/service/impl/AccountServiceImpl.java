@@ -42,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
         target.setMoney(target.getMoney() + money);
         // 2.5、更新转出账户
         accountDao.updateAccount(source);
-        int i = 10/0;
+        //int i = 10/0;
         // 2.6、更新转入账户
         accountDao.updateAccount(target);
     }

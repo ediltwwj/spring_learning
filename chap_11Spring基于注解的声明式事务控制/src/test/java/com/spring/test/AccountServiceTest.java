@@ -1,6 +1,7 @@
 package com.spring.test;
 
 import com.spring.service.AccountService;
+import config.SpringConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @date 2019/8/10 11:55
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:bean.xml")
+@ContextConfiguration(classes = SpringConfiguration.class)
 public class AccountServiceTest {
 
     @Autowired
